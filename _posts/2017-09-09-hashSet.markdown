@@ -1,0 +1,37 @@
+---
+layout:     post
+title:      "HashSet实现原理"
+date:       2017-09-09 12:00:00
+author:     "ShiYu"
+catalog: true
+tags:
+    - Java
+---
+
+上一篇文章介绍了HashMap的实现原理，今天研究了一下HashSet的源码，惊讶的发现HashSet是完全用HashMap实现的。
+
+HashSet内部使用了一个HashMap对象map，并定义了一个虚拟值PRESENT用于填充在map的value,HashSet实现的原理就是利用map的key唯一特性将添加到set中的值用hashMap的key存储起来，set中add方法的实现是如果调用map的put方法发现返回的值不为null即表明map中key未重复，也即表明set中不存在该值，便返回true，否则返回false（不明白的可以翻看前一篇文章HashMap源码解读）。
+
+add方法源码如下
+
+```java
+    /**
+     * Adds the specified element to this set if it is not already present.
+     * More formally, adds the specified element <tt>e</tt> to this set if
+     * this set contains no element <tt>e2</tt> such that
+     * <tt>(e==null&nbsp;?&nbsp;e2==null&nbsp;:&nbsp;e.equals(e2))</tt>.
+     * If this set already contains the element, the call leaves the set
+     * unchanged and returns <tt>false</tt>.
+     *
+     * @param e element to be added to this set
+     * @return <tt>true</tt> if this set did not already contain the specified
+     * element
+     */
+    public boolean add(E e) {
+        return map.put(e, PRESENT)==null;
+    }
+```
+
+其中map就是HashSet中定义的HashMap成员变量，PRESENT则是定义的一个static、final的用语填充map的虚拟值。
+
+HashSet就介绍到这里了，对HashSet其它方法实现有兴趣的可以自己翻看HashSet的源码，去掉注释只有短短几十行代码，很简单。
